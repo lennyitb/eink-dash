@@ -24,6 +24,23 @@ def is_night(now: datetime | None = None) -> bool:
     return (t >= start or t < end) if start > end else (start <= t < end)
 
 
+def scheduled_brightness(now: datetime) -> int:
+    """Day level, fading down from NIGHT_START and back up from NIGHT_END."""
+    day, night = settings.day_brightness, settings.night_brightness
+    mins = now.hour * 60 + now.minute
+    start = _hm(settings.night_start)
+    end = _hm(settings.night_end)
+    since_start = (mins - (start.hour * 60 + start.minute)) % 1440
+    since_end = (mins - (end.hour * 60 + end.minute)) % 1440
+    if not is_night(now):
+        if since_end < settings.wake_ramp_min:  # waking up
+            return round(night + (day - night) * (since_end + 1) / settings.wake_ramp_min)
+        return day
+    if since_start < settings.dim_ramp_min:  # winding down
+        return round(day - (day - night) * (since_start + 1) / settings.dim_ramp_min)
+    return night
+
+
 class Scheduler:
     def __init__(self, renderer: Renderer) -> None:
         self.renderer = renderer
@@ -41,7 +58,7 @@ class Scheduler:
     def brightness(self) -> int:
         if self.brightness_override is not None:
             return self.brightness_override
-        return settings.night_brightness if is_night() else settings.day_brightness
+        return scheduled_brightness(state.now())
 
     def refresh(self, full: bool = False) -> None:
         self.force_full = self.force_full or full

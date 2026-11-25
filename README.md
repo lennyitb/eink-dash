@@ -13,8 +13,10 @@ Paperwhite 4's 1072×1448 portrait panel, dithers to 16 grays, and pushes it ove
 
 **Schedule**: re-render every `PUSH_INTERVAL_S` (default 60 s, on the minute, so the clock
 is right). Pushes only when the image changed. A flashing GC16 full refresh runs every
-`FULL_REFRESH_MIN` (default 15) to clear ghosting. Frontlight follows `DAY_BRIGHTNESS` /
-`NIGHT_BRIGHTNESS` between `NIGHT_START` and `NIGHT_END`. SSH failures retry 3× with backoff
+`FULL_REFRESH_MIN` (default 15) to clear ghosting. The frontlight stays at
+`DAY_BRIGHTNESS` (default 20 of 24) by day, fades to `NIGHT_BRIGHTNESS` (default 1) over
+`DIM_RAMP_MIN` (60) starting at `NIGHT_START` (22:00), and fades back up over `WAKE_RAMP_MIN`
+(30) starting at `NIGHT_END` (07:00). SSH failures retry 3× with backoff
 (5 s, 15 s) in case the Kindle's Wi-Fi is waking.
 
 ## Run

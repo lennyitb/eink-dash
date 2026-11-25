@@ -43,11 +43,14 @@ class Settings:
     night_push_interval_s: int = field(default_factory=lambda: _int("NIGHT_PUSH_INTERVAL_S", 60))
     full_refresh_min: int = field(default_factory=lambda: _int("FULL_REFRESH_MIN", 15))
 
-    # Frontlight 0-24, day vs. night
-    day_brightness: int = field(default_factory=lambda: _int("DAY_BRIGHTNESS", 9))
-    night_brightness: int = field(default_factory=lambda: _int("NIGHT_BRIGHTNESS", 0))
-    night_start: str = field(default_factory=lambda: _env("NIGHT_START", "22:30"))
-    night_end: str = field(default_factory=lambda: _env("NIGHT_END", "06:30"))
+    # Frontlight 0-24. Day level until NIGHT_START, then fades to the night level over
+    # DIM_RAMP_MIN; at NIGHT_END fades back up to the day level over WAKE_RAMP_MIN.
+    day_brightness: int = field(default_factory=lambda: _int("DAY_BRIGHTNESS", 20))
+    night_brightness: int = field(default_factory=lambda: _int("NIGHT_BRIGHTNESS", 1))
+    night_start: str = field(default_factory=lambda: _env("NIGHT_START", "22:00"))
+    night_end: str = field(default_factory=lambda: _env("NIGHT_END", "07:00"))
+    dim_ramp_min: int = field(default_factory=lambda: _int("DIM_RAMP_MIN", 60))
+    wake_ramp_min: int = field(default_factory=lambda: _int("WAKE_RAMP_MIN", 30))
 
     # Content
     calendar_ics_urls: list[str] = field(
