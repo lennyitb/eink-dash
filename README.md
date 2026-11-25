@@ -60,3 +60,12 @@ Tools: `set_bulletin`, `clear_bulletin`, `get_dashboard`, `add_agenda_items`,
 pip install -r requirements.txt && playwright install chromium
 DATA_DIR=./data PUSH_ENABLED=false uvicorn app.main:app --reload --port 8080
 ```
+
+## Deploy
+
+A push to `main` deploys automatically. A GitHub webhook (push events) hits
+`https://lenny.zone/eink-dash-webhook`, which nginx proxies to a small listener on the
+homelab (`eink-dash-webhook.service`, 127.0.0.1:9119). It fast-forwards the clone in
+`/opt/eink-dash` and runs `docker compose up -d --build`, then waits for `/healthz`.
+`.env` and `key/` there are untracked and survive deploys. Logs:
+`journalctl -u eink-dash-webhook -f`.
