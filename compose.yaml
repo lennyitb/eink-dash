@@ -1,0 +1,21 @@
+services:
+  eink-dash:
+    build: .
+    image: eink-dash:local
+    container_name: eink-dash
+    restart: unless-stopped
+    init: true
+    env_file: .env
+    ports:
+      - "${BIND_ADDR:-127.0.0.1}:${BIND_PORT:-8094}:8080"
+    volumes:
+      - eink-data:/data
+      - ./key/kindle_dash_ed25519:/keys/kindle_dash_ed25519:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+
+volumes:
+  eink-data:

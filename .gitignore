@@ -1,0 +1,7 @@
+.env
+data/
+key/
+__pycache__/
+*.pyc
+*-preview.png
+.env.bak*
